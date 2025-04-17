@@ -14,9 +14,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  TooltipProvider,
-} from "@/components/ui/tooltip";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import {
   Select,
   SelectContent,
@@ -37,10 +35,10 @@ import {
 const formSchema = z.object({
   district: z.string().nonempty("District is required"),
   soil_color: z.string().nonempty("Soil color is required"),
-  nitrogen: z.number().min(0, "Nitrogen must be a positive number"),
-  phosphorus: z.number().min(0, "Phosphorus must be a positive number"),
-  potassium: z.number().min(0, "Potassium must be a positive number"),
-  pH: z.number().min(0, "pH must be a positive number"),
+  nitrogen: z.number().min(0, "Nitrogen must be a positive number").max(300, "Nitrogen must be less than 100"),
+  phosphorus: z.number().min(0, "Phosphorus must be a positive number").max(300, "Phosphorus must be less than 100"), 
+  potassium: z.number().min(0, "Potassium must be a positive number").max(300, "must be less than 300"),
+  pH: z.number().min(0, "pH must be a positive number").max(14, "must be less than 14"),
   rainfall: z.number().min(0, "Rainfall must be a positive number"),
   temperature: z.number().min(0, "Temperature must be a positive number"),
   crop: z.string().nonempty("Crop type is required"),
@@ -73,16 +71,16 @@ export default function FertilizerForm() {
   const fetchWeatherData = async (district: string) => {
     try {
       setLoadingWeather(true);
-      const apiKey = "52a444be96eb424ba6a173011253103"; // Replace with your WeatherAPI key
+      const apiKey = "52a444be96eb424ba6a173011253103";
       const response = await fetch(
         `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${district}`
       );
       const data = await response.json();
-  
-      console.log(data); // Debugging: Log the API response
-  
+
+      console.log(data);
+
       if (data && data.current) {
-        const rainfall = data.current.precip_mm !== undefined ? data.current.precip_mm : 0; 
+        const rainfall = data.current.pressure_mb;
         const temperature = data.current.temp_c;
         form.setValue("rainfall", rainfall);
         form.setValue("temperature", temperature);
@@ -96,7 +94,6 @@ export default function FertilizerForm() {
     }
   };
 
-  // Define the onSubmit function with proper typing
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
     try {
       const response = await fetch("http://127.0.0.1:5000/predict", {
@@ -138,7 +135,7 @@ export default function FertilizerForm() {
                         <Select
                           onValueChange={(value) => {
                             field.onChange(value);
-                            fetchWeatherData(value); 
+                            fetchWeatherData(value);
                           }}
                           defaultValue={field.value}
                         >
@@ -175,9 +172,18 @@ export default function FertilizerForm() {
                           <SelectContent>
                             <SelectItem value="Black">Black</SelectItem>
                             <SelectItem value="Red">Red</SelectItem>
-                            <SelectItem value="Medium Brown">Medium Brown</SelectItem>
-                            <SelectItem value="Dark Brown">Dark Brown</SelectItem>
-                            <SelectItem value="Light Brown">Light Brown</SelectItem>
+                            <SelectItem value="Medium Brown">
+                              Medium Brown
+                            </SelectItem>
+                            <SelectItem value="Dark Brown">
+                              Dark Brown
+                            </SelectItem>
+                            <SelectItem value="Light Brown">
+                              Light Brown
+                            </SelectItem>
+                            <SelectItem value="Reddish Brown">
+                              Reddish Brown
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                       </FormControl>
@@ -331,6 +337,15 @@ export default function FertilizerForm() {
                             <SelectItem value="Rice">Rice</SelectItem>
                             <SelectItem value="Maize">Maize</SelectItem>
                             <SelectItem value="Sugarcane">Sugarcane</SelectItem>
+                            <SelectItem value="Cotton">Cotton</SelectItem>
+                            <SelectItem value="Tur">Tur</SelectItem>
+                            <SelectItem value="Urad">Urad</SelectItem>
+                            <SelectItem value="Masoor">Masoor</SelectItem>
+                            <SelectItem value="Soyabean">Soyabean</SelectItem>
+                            <SelectItem value="Ginger">Ginger</SelectItem>
+                            <SelectItem value="Turmeric">Turmeric</SelectItem>
+                            <SelectItem value="Grapes">Grapes</SelectItem>
+                            <SelectItem value="Jowar">Jowar</SelectItem>
                           </SelectContent>
                         </Select>
                       </FormControl>
@@ -338,7 +353,11 @@ export default function FertilizerForm() {
                     </FormItem>
                   )}
                 />
-                <Button type="submit" className="w-full" disabled={loadingWeather}>
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={loadingWeather}
+                >
                   {loadingWeather ? "Loading Weather..." : "Predict"}
                 </Button>
               </fieldset>

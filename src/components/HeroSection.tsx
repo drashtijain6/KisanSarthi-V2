@@ -16,7 +16,7 @@ const HeroSection = () => {
           <div className="sm:text-center lg:text-left lg:mr-8">
             <h1 className="text-4xl tracking-tight font-bold text-gray-900 sm:text-5xl md:text-6xl">
               <span className="block">Grow Better Crops</span>
-              <span className="block text-kisan-green-dark">With Smart Fertilizers</span>
+              <span className="block text-kisan-green-dark">With Fertilizers</span>
             </h1>
             <p className="mt-3 text-base text-gray-700 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto lg:mx-0 md:mt-5 md:text-xl">
               KisanSarthi helps farmers optimize their fertilizer usage, improve crop yields, 

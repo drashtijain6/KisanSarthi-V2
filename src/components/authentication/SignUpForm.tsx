@@ -3,8 +3,7 @@ import React, { useId, useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner"
-
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -20,16 +19,6 @@ import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 import { signup } from "@/app/actions/auth-actions";
 import { redirect } from "next/navigation";
-
-// Regex for password validation
-// At least 8 characters
-// At least one uppercase letter
-// At least one lowercase letter
-// At least one number
-// At least one special character
-// const passwordValidation = new RegExp(
-//   "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&*!]).{8,}$"
-// );
 
 const formSchema = z
   .object({
@@ -48,15 +37,10 @@ const formSchema = z
       .min(8, {
         message: "Password must be atleast 8 characters long",
       }),
-      // .regex(passwordValidation, {
-      //   message:
-      //     "Password must atleast contain 1 Uppercase letter, 1 lowercase letter, 1 number and 1 special character ",
-      // }),
 
     confirmPassword: z.string({
       required_error: "confirm password is required",
     }),
-    // how do we know password and confirm password is same , so we use refine (refine takes all the data from the fields)
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
@@ -81,26 +65,26 @@ const SignUpForm = ({ className }: { className?: string }) => {
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    toast.loading("Signing up...", {id: toastId})
+    toast.loading("Signing up...", { id: toastId });
     setLoading(true);
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
 
-    const formData = new FormData()
-    formData.append('full_name', values.full_name)
-    formData.append('email', values.email)
-    formData.append('password', values.password)
+    const formData = new FormData();
+    formData.append("full_name", values.full_name);
+    formData.append("email", values.email);
+    formData.append("password", values.password);
 
     // lets call our server action
-    const {success, error} = await signup(formData)
+    const { success, error } = await signup(formData);
 
-    if(!success){
-      toast.error(String(error), {id: toastId})
-      setLoading(false)
-    } else{
-      toast.success("Signup success! , Now please confirm your email address" , {id: toastId})
-      setLoading(false)
-      redirect('/login')
+    if (!success) {
+      toast.error(String(error), { id: toastId });
+      setLoading(false);
+    } else {
+      toast.success("Signup success! , Now please confirm your email address", {
+        id: toastId,
+      });
+      setLoading(false);
+      redirect("/login");
     }
 
     console.log(values);
@@ -145,7 +129,11 @@ const SignUpForm = ({ className }: { className?: string }) => {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter Your Password" {...field} />
+                  <Input
+                    type="password"
+                    placeholder="Enter Your Password"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -159,16 +147,19 @@ const SignUpForm = ({ className }: { className?: string }) => {
               <FormItem>
                 <FormLabel>Confirm Password</FormLabel>
                 <FormControl>
-                  <Input placeholder="Confirm Your Password" {...field} />
+                  <Input
+                    type="password"
+                    placeholder="Confirm Your Password"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
           <Button type="submit" className="w-full" disabled={loading}>
-            {
-              loading && <Loader2 className="animate-spin mr-2 h-2 w-4 "/>
-            }SignUp
+            {loading && <Loader2 className="animate-spin mr-2 h-2 w-4 " />}
+            SignUp
           </Button>
         </form>
       </Form>
